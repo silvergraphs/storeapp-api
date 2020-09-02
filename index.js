@@ -5,6 +5,7 @@ const mysql = require("mysql");
 var indexRouter = require("./routes/api");
 var usersRouter = require("./routes/users");
 
+// Connection settings
 const connectionData = {
   host: "localhost",
   port: 8889,
@@ -15,18 +16,19 @@ const connectionData = {
 
 connection = mysql.createConnection(connectionData);
 
+// Connects to database
 connection.connect((err) => {
   if (err) {
-    console.log("[StoreApp] Failed to connect to database");
-    console.log("[StoreApp] " + err);
+    console.log(`[StoreApp] Failed to connect to database\n[StoreApp] ${err}`);
   } else {
-    console.log("[StoreApp] Connected to database");
+    console.log(`[StoreApp] Connected to database`);
   }
 });
 
 const app = express();
 const port = 3080;
 
+// CORS
 app.use(cors());
 
 // Routes

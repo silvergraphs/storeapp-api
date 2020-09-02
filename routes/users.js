@@ -1,5 +1,4 @@
 var express = require("express");
-const { restart } = require("nodemon");
 var router = express.Router();
 const bodyParser = require("body-parser");
 
@@ -92,7 +91,7 @@ router.put("/", (req, res) => {
   }
 });
 
-// Delete
+// Delete (DELETE)
 router.delete("/", (req, res) => {
   const { userId } = req.body;
   if (!userId) {
@@ -111,14 +110,6 @@ router.delete("/", (req, res) => {
       }
     });
   }
-});
-
-// Working POST
-
-router.post("/test", (req, res) => {
-  //code to perform particular action.
-  //To access POST variable use req.body()methods.
-  res.send(req.body);
 });
 
 module.exports = router;
