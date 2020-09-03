@@ -4,6 +4,7 @@ const mysql = require("mysql");
 
 var indexRouter = require("./routes/api");
 var usersRouter = require("./routes/users");
+var categoryRouter = require("./routes/category");
 
 // Connection settings
 const connectionData = {
@@ -34,6 +35,7 @@ app.use(cors());
 // Routes
 app.use("/api", indexRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/category", categoryRouter);
 
 app.listen(port, () => {
   console.log(`[StoreApp] Listening at port ${port}`);
