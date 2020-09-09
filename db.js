@@ -19,6 +19,8 @@ async function testConnection() {
   try {
     await sequelize.authenticate();
     console.log("[StoreApp-DB] Connected to database.");
+    await sequelize.sync();
+    console.log("[StoreApp-DB] All models were synchronized successfully.");
   } catch (error) {
     console.error(
       "[StoreApp-DB] Unable to connect to the database " +
