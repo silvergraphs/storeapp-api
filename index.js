@@ -2,8 +2,6 @@ const express = require("express");
 const cors = require("cors");
 
 var indexRouter = require("./routes/api");
-var usersRouter = require("./routes/users");
-var categoryRouter = require("./routes/category");
 
 const db = require("./db");
 
@@ -15,8 +13,6 @@ app.use(cors());
 
 // Routes
 app.use("/api", indexRouter);
-app.use("/api/users", usersRouter);
-app.use("/api/category", categoryRouter);
 
 // Tests database connection
 db.testConnection();
