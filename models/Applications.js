@@ -4,10 +4,9 @@ module.exports = function (sequelize, DataTypes) {
   return sequelize.define(
     "Applications",
     {
-      idApplication: {
+      id: {
         autoIncrement: true,
         type: DataTypes.INTEGER(11),
-        allowNull: false,
         primaryKey: true,
       },
       name: {
@@ -22,31 +21,30 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING(45),
         allowNull: true,
       },
-      Category_idCategory: {
+      Category_id: {
         type: DataTypes.INTEGER(11),
         allowNull: false,
         references: {
           model: {
             tableName: "Categories",
           },
-          key: "idCategory",
+          key: "id",
         },
       },
-      User_idUser: {
+      User_id: {
         type: DataTypes.INTEGER(11),
         allowNull: false,
         references: {
           model: {
             tableName: "Users",
           },
-          key: "idUser",
+          key: "id",
         },
       },
     },
     {
       sequelize,
       tableName: "Applications",
-      timestamps: false,
     }
   );
 };

@@ -4,9 +4,9 @@ module.exports = function (sequelize, DataTypes) {
   return sequelize.define(
     "Users",
     {
-      idUser: {
+      id: {
         type: DataTypes.INTEGER(11),
-        allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
       },
       name: {
@@ -17,6 +17,9 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING(45),
         allowNull: false,
         unique: true,
+        validate: {
+          isEmail: true,
+        },
       },
       userType: {
         type: DataTypes.ENUM("user", "developer"),
@@ -30,7 +33,6 @@ module.exports = function (sequelize, DataTypes) {
     {
       sequelize,
       tableName: "Users",
-      timestamps: false,
     }
   );
 };

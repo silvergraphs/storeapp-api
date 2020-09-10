@@ -4,10 +4,9 @@ module.exports = function (sequelize, DataTypes) {
   return sequelize.define(
     "Categories",
     {
-      idCategory: {
+      id: {
         autoIncrement: true,
         type: DataTypes.INTEGER(11),
-        allowNull: false,
         primaryKey: true,
       },
       name: {
@@ -18,7 +17,6 @@ module.exports = function (sequelize, DataTypes) {
     {
       sequelize,
       tableName: "Categories",
-      timestamps: false,
     }
   );
 };

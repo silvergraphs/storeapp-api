@@ -2,42 +2,50 @@ var express = require("express");
 var router = express.Router();
 const bodyParser = require("body-parser");
 
+const { User } = require("../../db");
+
 // Configuring express to use body-parser as middle-ware.
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
-// Create (POST)
-router.post("/", (req, res) => {
+// Read all users (GET)
+router.get("/", async (req, res) => {
+  const users = await User.findAll();
+  res.json(users);
+});
+
+// Create user (POST)
+router.post("/", async (req, res) => {
   const { name, email, userType } = req.body;
-  if (!name || !email || !userType) {
-    res.send("No data received");
-  } else {
-    ADD_NEW_USER =
-      "INSERT INTO `User` (`name`, `email`, `userType`) VALUES ('" +
-      name +
-      "', '" +
-      email +
-      "', '" +
-      userType +
-      "')";
-    connection.query(ADD_NEW_USER, (err, _user) => {
-      if (err) {
-        if (err.code === "ER_DUP_ENTRY") {
-          // Si el codigo de error es entrada duplicada
-          res.send("User already exists"); // Avisa que el usuario ya existe
-        } else {
-          res.send(err);
-          console.log("[StoreApp] Error adding new user \n" + err);
-        }
+  if (name && email && userType) {
+    try {
+      const [user, created] = await User.findOrCreate({
+        where: { email: req.body.email },
+        defaults: {
+          name: name,
+          email: email,
+          userType: userType,
+        },
+      });
+      if (created) {
+        const { id, name, email, userType } = user.dataValues;
+        res.send("User created successfully");
+        console.log(
+          `[StoreApp] New user created (ID: ${id} - Name: ${name} - Email: ${email} - User Type: ${userType})`
+        );
       } else {
-        res.send("User added");
-        console.log(`[StoreApp] New user added to database (Email: ${email})`);
+        res.send("User email already exists");
       }
-    });
+    } catch (err) {
+      console.error(err);
+      res.send(err);
+    }
+  } else {
+    res.send("No enough data received");
   }
 });
 
-// Read (GET)
+/* // Read (GET)
 router.get("/", (_req, res) => {
   SELECT_ALL_USERS = "SELECT * FROM `User`";
   connection.query(SELECT_ALL_USERS, (err, users) => {
@@ -110,6 +118,6 @@ router.delete("/", (req, res) => {
       }
     });
   }
-});
+}); */
 
 module.exports = router;
