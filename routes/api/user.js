@@ -3,7 +3,6 @@ var router = express.Router();
 const bodyParser = require("body-parser");
 
 const { User } = require("../../db");
-const e = require("express");
 
 // Configuring express to use body-parser as middle-ware.
 router.use(bodyParser.urlencoded({ extended: false }));
@@ -19,12 +18,13 @@ router.get("/", async (req, res) => {
 router.get("/:userId", async (req, res) => {
   try {
     const user = await User.findOne({ where: { id: req.params.userId } });
-    user === null
-      ? res.json({ success: false, message: "User not found" })
-      : res.json(user);
+    if (user) {
+      res.json(user);
+    } else {
+      res.status(404).json({ success: false, message: "User not found" });
+    }
   } catch (err) {
-    console.error(err);
-    res.send(err);
+    res.status(500).send(err);
   }
 });
 
@@ -51,17 +51,17 @@ router.post("/", async (req, res) => {
           `[StoreApp] New user created (ID: ${id} - Name: ${name} - Email: ${email} - User Type: ${userType})`
         );
       } else {
-        res.json({
+        res.status(412).json({
           success: false,
           msg: "User email already exists",
         });
       }
     } catch (err) {
       console.error(err);
-      res.send(err);
+      res.status(500).send(err);
     }
   } else {
-    res.json({
+    res.status(400).json({
       success: false,
       msg: "No enough data received",
     });
@@ -85,10 +85,10 @@ router.put("/:userId", async (req, res) => {
       );
     } catch (err) {
       console.error(err);
-      res.send(err);
+      res.status(500).send(err);
     }
   } else {
-    res.json({
+    res.status(400).json({
       success: false,
       msg: "No enough data received",
     });
@@ -105,7 +105,7 @@ router.delete("/:userId", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.send(err);
+    res.status(500).send(err);
   }
 });
 
