@@ -10,12 +10,16 @@ This app is created for learn purposes, i learn while developing 📘
 
 ## Installation ⚡
 
-Clone the repository, install dependencies, and run the server.
+Clone the repository, install dependencies, configure MySQL connection and run the server.
 
 ```bash
 npm install
 npm start
 ```
+
+## Requirements
+
+The only requirement is a MySQL server with a database called `store`, the app creates all the databases automatically.
 
 ## API Docs 🐺
 
