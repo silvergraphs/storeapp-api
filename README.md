@@ -6,7 +6,7 @@ As user you can see every app created by an developer and you can buy apps.
 
 As developer you can see every app and your uploaded/developed apps.
 
-This app is created for learn purposes 📘
+This app is created for learn purposes, i learn while developing 📘
 
 ## Installation ⚡
 
