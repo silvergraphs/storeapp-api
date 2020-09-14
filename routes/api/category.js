@@ -9,37 +9,48 @@ router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
 // Read all categories (GET)
-router.get("/", async (req, res) => {
-  const categories = await Category.findAll();
-  res.json(categories);
+router.get("/", async (req, res, next) => {
+  try {
+    const categories = await Category.findAll();
+    res.json(categories);
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Read specific category from ID (GET)
-router.get("/:categoryId", async (req, res) => {
+router.get("/:categoryId", async (req, res, next) => {
   try {
     const category = await Category.findOne({
       where: { id: req.params.categoryId },
     });
     if (category) {
-      res.json(category);
+      // If the category exists
+      res.json(category); // Prints the JSON
     } else {
-      res.status(404).json({ success: false, message: "Category not found" });
+      err = {
+        statusCode: 404,
+        msg: "Category not found",
+      };
+      next(err);
     }
   } catch (err) {
-    res.status(500).send(err);
+    next(err);
   }
 });
 
 // Create category (POST)
-router.post("/", async (req, res) => {
-  if (req.body.name) {
+router.post("/", async (req, res, next) => {
+  const { name } = req.body;
+  if (name) {
     try {
       const [category, created] = await Category.findOrCreate({
-        where: { name: req.body.name },
+        where: { name: name },
         defaults: {
-          name: req.body.name,
+          name: name,
         },
       });
+
       if (created) {
         const { id, name } = category.dataValues;
         res.json({
@@ -50,51 +61,72 @@ router.post("/", async (req, res) => {
           `[StoreApp] New category created (ID: ${id} - Name: ${name})`
         );
       } else {
-        res.status(412).json({
-          success: false,
+        err = {
+          statusCode: 412,
           msg: "Category already exists",
-        });
+        };
+        next(err);
       }
     } catch (err) {
-      console.error(err);
-      res.status(500).send(err);
+      next(err);
     }
   } else {
-    res.status(400).json({
-      success: false,
+    err = {
+      statusCode: 400,
       msg: "No enough data received",
-    });
+    };
+    next(err);
   }
 });
 
 // Update category (PUT)
-router.put("/:categoryId", async (req, res) => {
-  if (req.body.name) {
-    try {
-      await Category.update(req.body, {
-        where: { id: req.params.categoryId },
-      });
-      res.json({
-        success: true,
-        msg: "Category updated successfully",
-      });
-      console.log(
-        `[StoreApp] Category updated (ID: ${req.params.categoryId} - New name: ${req.body.name})`
-      );
-    } catch (err) {
-      console.error(err);
-      res.status(500).send(err);
-    }
-  } else {
-    res.status(400).json({
-      success: false,
-      msg: "No enough data received",
+router.put("/:categoryId", async (req, res, next) => {
+  const { name } = req.body;
+  // Check if all data is received
+  if (name) {
+    // First check if the category name already exists on db
+    const isIdUnique = (name) =>
+      Category.findOne({ where: { name: name } })
+        .then((token) => token !== null)
+        .then((isUnique) => isUnique);
+
+    isIdUnique(name).then(async (isUnique) => {
+      if (isUnique) {
+        err = {
+          statusCode: 412,
+          msg: "Category already exists",
+        };
+        next(err); // If category exists reports the error to the middleware
+      } else {
+        try {
+          // Runs the update code
+          await Category.update(req.body, {
+            where: { id: req.params.categoryId },
+          });
+          res.json({
+            success: true,
+            msg: "Category updated successfully",
+          });
+          console.log(
+            `[StoreApp] Category updated (ID: ${req.params.categoryId} - Name: ${name})`
+          );
+        } catch (err) {
+          next(err);
+        }
+      }
     });
+  } else {
+    // If not enough data received, reports the error to the middleware
+    err = {
+      statusCode: 400,
+      msg: "No enough data received",
+    };
+    next(err);
   }
 });
 
 // Delete category (DELETE)
-router.delete("/:categoryId", async (req, res) => {
+router.delete("/:categoryId", async (req, res, next) => {
   try {
     await Category.destroy({ where: { id: req.params.categoryId } });
     res.json({
@@ -102,8 +134,8 @@ router.delete("/:categoryId", async (req, res) => {
       msg: "Category deleted successfully",
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
+    next(err);
   }
 });
+
 module.exports = router;

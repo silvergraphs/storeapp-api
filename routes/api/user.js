@@ -9,27 +9,36 @@ router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
 // Read all users (GET)
-router.get("/", async (req, res) => {
-  const users = await User.findAll();
-  res.json(users);
+router.get("/", async (req, res, next) => {
+  try {
+    const users = await User.findAll();
+    res.json(users);
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Read specific user from ID (GET)
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { id: req.params.userId } });
     if (user) {
-      res.json(user);
+      // If the user exists
+      res.json(user); // Prints the JSON
     } else {
-      res.status(404).json({ success: false, message: "User not found" });
+      err = {
+        statusCode: 404,
+        msg: "User not found",
+      };
+      next(err);
     }
   } catch (err) {
-    res.status(500).send(err);
+    next(err);
   }
 });
 
 // Create user (POST)
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   const { name, email, userType } = req.body;
   if (name && email && userType) {
     try {
@@ -41,6 +50,7 @@ router.post("/", async (req, res) => {
           userType: userType,
         },
       });
+
       if (created) {
         const { id, name, email, userType } = user.dataValues;
         res.json({
@@ -51,52 +61,72 @@ router.post("/", async (req, res) => {
           `[StoreApp] New user created (ID: ${id} - Name: ${name} - Email: ${email} - User Type: ${userType})`
         );
       } else {
-        res.status(412).json({
-          success: false,
+        err = {
+          statusCode: 412,
           msg: "User email already exists",
-        });
+        };
+        next(err);
       }
     } catch (err) {
-      console.error(err);
-      res.status(500).send(err);
+      next(err);
     }
   } else {
-    res.status(400).json({
-      success: false,
+    err = {
+      statusCode: 400,
       msg: "No enough data received",
-    });
+    };
+    next(err);
   }
 });
 
 // Update user (PUT)
-router.put("/:userId", async (req, res) => {
-  const { name, email, userType } = req.body;
-  if (name && email && userType) {
-    try {
-      await User.update(req.body, {
-        where: { id: req.params.userId },
-      });
-      res.json({
-        success: true,
-        msg: "User updated successfully",
-      });
-      console.log(
-        `[StoreApp] User updated (ID: ${req.params.userId} - Name: ${name} - Email: ${email} - User Type: ${userType})`
-      );
-    } catch (err) {
-      console.error(err);
-      res.status(500).send(err);
-    }
-  } else {
-    res.status(400).json({
-      success: false,
-      msg: "No enough data received",
+router.put("/:userId", async (req, res, next) => {
+  const { name, email } = req.body;
+  // Check if all data is received
+  if (name && email) {
+    // First check if the email already exists on db
+    const isIdUnique = (email) =>
+      User.findOne({ where: { email: email } })
+        .then((token) => token !== null)
+        .then((isUnique) => isUnique);
+
+    isIdUnique(email).then(async (isUnique) => {
+      if (isUnique) {
+        err = {
+          statusCode: 412,
+          msg: "User email already exists",
+        };
+        next(err); // If email exists reports the error to the middleware
+      } else {
+        try {
+          // Runs the update code
+          await User.update(req.body, {
+            where: { id: req.params.userId },
+          });
+          res.json({
+            success: true,
+            msg: "User updated successfully",
+          });
+          console.log(
+            `[StoreApp] User updated (ID: ${req.params.userId} - Name: ${name} - Email: ${email})`
+          );
+        } catch (err) {
+          next(err);
+        }
+      }
     });
+  } else {
+    // If not enough data received, reports the error to the middleware
+    err = {
+      statusCode: 400,
+      msg: "No enough data received",
+    };
+    next(err);
   }
 });
 
 // Delete user (DELETE)
-router.delete("/:userId", async (req, res) => {
+router.delete("/:userId", async (req, res, next) => {
   try {
     await User.destroy({ where: { id: req.params.userId } });
     res.json({
@@ -104,8 +134,7 @@ router.delete("/:userId", async (req, res) => {
       msg: "User deleted successfully",
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
+    next(err);
   }
 });
 
