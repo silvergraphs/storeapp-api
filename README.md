@@ -65,7 +65,7 @@ The only requirement is a MySQL server with a database called `store`, the app c
 
 - Requires: `:categoryId`, `name`
 
-#### `DELETE /api/category/id` - Deletes specific category from id
+#### `DELETE /api/category/id` - Delete specific category from id
 
 - Requires: `:categoryId`
 
