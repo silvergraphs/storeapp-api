@@ -25,39 +25,73 @@ The only requirement is a MySQL server with a database called `store`, the app c
 
 #### Users
 
-`POST /api/user` - Create new user
+#### `POST /api/user` - Create new user
 
-`GET /api/user` - Get all users
+- Requires: `name` , `email` , `userType` (user/developer)
 
-`GET /api/user/id` - Get specific user from id
+#### `GET /api/user` - Get all users
 
-`PUT /api/user/id` - Update specific user from id
+- Without requirements
 
-`DELETE /api/user/id` - Delete specific user from id
+#### `GET /api/user/id` - Get specific user from id
+
+- Requires: `:userId`
+
+#### `PUT /api/user/id` - Update specific user from id
+
+- Requires: `:userId` , `name` , `email`
+
+#### `DELETE /api/user/id` - Delete specific user from id
+
+- Requires: `:userId`
+
+---
 
 #### Categories
 
-`POST /api/category` - Create new category
+#### `POST /api/category` - Create new category
 
-`GET /api/category` - Get all categories
+- Requires: `name`
 
-`GET /api/category/id` - Get specific category from id
+#### `GET /api/category` - Get all categories
 
-`PUT /api/category/id` - Update specific category from id
+- Without requirements
 
-`DELETE /api/category/id` - Deletes specific category from id
+#### `GET /api/category/id` - Get specific category from id
+
+- Requires: `:categoryId`
+
+#### `PUT /api/category/id` - Update specific category from id
+
+- Requires: `:categoryId`, `name`
+
+#### `DELETE /api/category/id` - Deletes specific category from id
+
+- Requires: `:categoryId`
+
+---
 
 #### Applications
 
-`POST /api/app` - Create new application
+#### `POST /api/app` - Create new application
 
-`GET /api/app` - Get all applications
+- Requires: `name` , `price` , `logo` (URL) , `Category_id`, `User_id`
 
-`GET /api/app/id` - Get specific application from id
+#### `GET /api/app` - Get all applications
 
-`PUT /api/app/id` - Update specific application from id
+- Without requirements
 
-`DELETE /api/app/id` - Delete specific application from id
+#### `GET /api/app/id` - Get specific application from id
+
+- Requires: `:appId`
+
+#### `PUT /api/app/id` - Update specific application from id
+
+- Requires: `:appId`, `price` , `logo` (URL)
+
+#### `DELETE /api/app/id` - Delete specific application from id
+
+- Requires: `:appId`
 
 ## Contributing 👍
 
