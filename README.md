@@ -1,6 +1,6 @@
 # Full Stack Store App
 
-This application tries to imitate the Google Play Store, showing a list of applications and categories, where you can register as a user or developer.
+This application tries to imitate an application store, showing a list of applications and categories, where you can register as a user or developer.
 
 As user you can see every app created by an developer and you can buy apps.
 
