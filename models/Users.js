@@ -22,7 +22,7 @@ module.exports = function (sequelize, DataTypes) {
         },
       },
       password: {
-        type: DataTypes.STRING(20),
+        type: DataTypes.STRING(60),
         allowNull: false,
       },
       userType: {

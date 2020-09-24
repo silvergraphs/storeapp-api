@@ -2,6 +2,8 @@ var express = require("express");
 var router = express.Router();
 const bodyParser = require("body-parser");
 
+var bcrypt = require("bcryptjs");
+
 const { User } = require("../../db");
 
 // Configuring express to use body-parser as middle-ware.
@@ -47,7 +49,7 @@ router.post("/", async (req, res, next) => {
         defaults: {
           name: name,
           email: email,
-          password: password,
+          password: bcrypt.hashSync(password, 5), // Encrypts password
           userType: userType,
         },
       });
