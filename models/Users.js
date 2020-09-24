@@ -21,6 +21,10 @@ module.exports = function (sequelize, DataTypes) {
           isEmail: true,
         },
       },
+      password: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+      },
       userType: {
         type: DataTypes.ENUM("user", "developer"),
         allowNull: false,

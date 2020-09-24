@@ -27,7 +27,7 @@ The only requirement is a MySQL server with a database called `store`, the app c
 
 #### `POST /api/user` - Create new user
 
-- Requires: `name` , `email` , `userType` (user/developer)
+- Requires: `name` , `email` , `password` , `userType` (user/developer)
 
 #### `GET /api/user` - Get all users
 

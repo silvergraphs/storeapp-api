@@ -39,14 +39,15 @@ router.get("/:userId", async (req, res, next) => {
 
 // Create user (POST)
 router.post("/", async (req, res, next) => {
-  const { name, email, userType } = req.body;
-  if (name && email && userType) {
+  const { name, email, password, userType } = req.body;
+  if (name && email && userType && password) {
     try {
       const [user, created] = await User.findOrCreate({
         where: { email: req.body.email },
         defaults: {
           name: name,
           email: email,
+          password: password,
           userType: userType,
         },
       });
