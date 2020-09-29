@@ -2,8 +2,7 @@ var express = require("express");
 var router = express.Router();
 const bodyParser = require("body-parser");
 
-const { User } = require("../../db");
-const { Application } = require("../../db");
+const { User, Application, Category } = require("../../db");
 
 // Configuring express to use body-parser as middle-ware.
 router.use(bodyParser.urlencoded({ extended: false }));
@@ -27,7 +26,12 @@ router.get("/:appId", async (req, res, next) => {
     });
     if (application) {
       // If the application exists
-      res.json(application); // Prints the JSON
+      // Obtains app category name
+      const category = await Category.findOne({
+        where: { id: application.Category_id },
+      });
+      const data = { application, category };
+      res.json(data); // Prints the JSON
     } else {
       err = {
         statusCode: 404,
